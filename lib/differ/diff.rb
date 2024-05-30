@@ -56,7 +56,12 @@ module Differ
 
     def format_as(f)
       f = Differ.format_for(f)
-      @raw.reduce('') do |sum, part|
+
+      # Allow Formatter to inject HTML without it being escaped
+      output = ''
+      output = output.html_safe if output.respond_to?(:html_safe) # Mark html-safe if ActiveSupport has added the method
+
+      @raw.reduce(output) do |sum, part|
         part = case part
         when String then part
         when Change then f.call(part)
